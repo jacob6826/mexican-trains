@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
     <title>Mexican Train Dominoes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,12 +15,10 @@
             <div class="w-32 text-left">
                 <button id="new-game-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow">New Game</button>
             </div>
-
             <div class="text-center">
                  <h1 class="text-xl sm:text-3xl font-bold text-gray-700">Mexican Train Dominoes</h1>
                  <p id="game-status" class="text-sm sm:text-lg text-gray-500 mt-1">Setting up the game...</p>
             </div>
-
             <div class="w-32 text-right">
                 <button id="dark-mode-toggle" class="w-12 h-10 text-2xl rounded-lg inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300"></button>
             </div>
@@ -29,12 +27,6 @@
         <div id="game-board" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             
             <div class="card p-4 rounded-lg shadow-md">
-                <div id="boneyard-container" class="text-center mb-4">
-                    <h2 class="font-bold text-xl mb-2">Boneyard</h2>
-                    <div id="boneyard" class="w-24 h-16 bg-gray-700 text-white flex items-center justify-center rounded-lg mx-auto cursor-pointer">
-                        <span id="boneyard-count" class="text-2xl font-bold">0</span>
-                    </div>
-                </div>
                 <div id="scoreboard-container">
                     <div id="scoreboard-header" class="flex justify-center items-center gap-2 cursor-pointer mb-2">
                         <h2 class="font-bold text-xl">Score</h2>
@@ -51,7 +43,14 @@
         </div>
 
         <div id="player-hand-area" class="card mt-4 p-4 rounded-lg shadow-md">
-            <h2 class="font-bold text-xl mb-2 text-center">Your Hand (<span id="player-domino-count">0</span>)</h2>
+            <div class="relative text-center mb-2 h-10">
+                 <div class="absolute left-0 top-0 flex items-center h-full space-x-3">
+                     <button id="boneyard" class="bg-gray-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-600">Draw</button>
+                     <div class="text-lg hidden sm:block">Boneyard: <span id="boneyard-count" class="font-bold">0</span></div>
+                 </div>
+                 <h2 class="font-bold text-xl leading-10">Your Hand (<span id="player-domino-count">0</span>)</h2>
+            </div>
+
             <div id="player-hand" class="player-hand-container p-2 min-h-[400px]"></div>
         </div>
     </div>
