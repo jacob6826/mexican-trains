@@ -28,7 +28,7 @@ let touchState = {
     dominoInitialX: 0,
     dominoInitialY: 0,
     active: false,
-    isDragging: false // New flag to differentiate tap vs drag
+    isDragging: false
 };
 
 
@@ -175,7 +175,6 @@ function initGame(isNewGame = true) {
         player.hand = gameState.boneyard.splice(0, dominoesToDraw);
     });
     
-    // Position dominoes in player's hand
     const playerHand = gameState.players[0].hand;
     const containerWidth = playerHandEl.clientWidth;
     const dominoWidth = window.innerWidth < 768 ? 70 : 80;
@@ -195,7 +194,7 @@ function initGame(isNewGame = true) {
     gameState.trains.mexican = { path: [], isOpen: true, owner: null };
     
     gameState.isRoundOver = false;
-    gameState.currentPlayer = 0; // Start with human player
+    gameState.currentPlayer = 0;
     gameState.selectedDomino = null;
     gameState.mustSatisfyDouble = false;
     
@@ -217,10 +216,14 @@ function renderAll() {
 function createTrainRow(key, labelText) {
     const train = gameState.trains[key];
     const trackRow = document.createElement('div');
-    trackRow.className = 'flex items-center py-2';
+    // --- RESPONSIVE LAYOUT CHANGE ---
+    // Default to column layout, switch to row on medium screens and up
+    trackRow.className = 'flex flex-col md:flex-row md:items-center py-2';
 
     const label = document.createElement('div');
-    label.className = 'w-48 text-right pr-4 font-semibold text-gray-600 shrink-0 flex items-center justify-end';
+    // --- RESPONSIVE LAYOUT CHANGE ---
+    // Default to left-aligned, full-width. Switch to fixed-width, right-aligned on medium up.
+    label.className = 'w-full text-left text-sm md:text-base font-semibold text-gray-600 shrink-0 flex items-center justify-start md:w-48 md:justify-end md:text-right md:pr-4';
     label.textContent = labelText;
 
     const trainTrack = document.createElement('div');
@@ -242,7 +245,7 @@ function createTrainRow(key, labelText) {
     const isMobile = window.innerWidth <= 768;
 
     if (!isMobile && train.path.length > 3) {
-        const offset = (train.path.length - 3) * (dominoWidth + 2); // width + margin
+        const offset = (train.path.length - 3) * (dominoWidth + 2);
         pathContainer.style.transform = `translateX(-${offset}px)`;
     } else {
         pathContainer.style.transform = `translateX(0px)`;
@@ -250,6 +253,8 @@ function createTrainRow(key, labelText) {
 
     trainTrack.appendChild(engineEl);
     trainTrack.appendChild(pathContainer);
+    
+    // Add label first, then the track
     trackRow.appendChild(label);
     trackRow.appendChild(trainTrack);
 
@@ -257,9 +262,7 @@ function createTrainRow(key, labelText) {
         const marker = document.createElement('span');
         marker.className = 'text-2xl ml-2';
         marker.textContent = '🚂';
-        const textNode = label.childNodes[0];
-        label.innerHTML = '';
-        label.appendChild(textNode);
+        // Append marker to the label div
         label.appendChild(marker);
     }
     return trackRow;
@@ -636,19 +639,17 @@ function handleDrop(e) {
     if (draggedState.index === null) return;
     
     const handRect = playerHandEl.getBoundingClientRect();
-    
-    // --- BOUNDARY CHECK ADDED ---
+
     if (e.clientX >= handRect.left && e.clientX <= handRect.right && e.clientY >= handRect.top && e.clientY <= handRect.bottom) {
         const dominoToMove = gameState.players[0].hand[draggedState.index];
         dominoToMove.x = e.clientX - handRect.left - draggedState.offsetX;
         dominoToMove.y = e.clientY - handRect.top - draggedState.offsetY;
     }
     
-    // Always re-render to snap back if dropped outside
     renderPlayerHand();
 }
 
-// --- Touch Handlers for Mobile Dragging (UPDATED) ---
+// --- Touch Handlers for Mobile Dragging ---
 function handleTouchStart(e) {
     const dominoEl = e.target.closest('.domino');
     if (!dominoEl) return;
@@ -665,7 +666,7 @@ function handleTouchStart(e) {
         dominoInitialX: domino.x,
         dominoInitialY: domino.y,
         active: true,
-        isDragging: false // Reset dragging flag
+        isDragging: false
     };
     dominoEl.classList.add('dragging');
 }
@@ -678,7 +679,6 @@ function handleTouchMove(e) {
     const deltaX = Math.abs(touch.clientX - touchState.startX);
     const deltaY = Math.abs(touch.clientY - touchState.startY);
 
-    // If finger moves more than a few pixels, register it as a drag
     if (deltaX > 5 || deltaY > 5) {
         touchState.isDragging = true;
     }
@@ -701,12 +701,10 @@ function handleTouchEnd(e) {
     const dominoEl = document.querySelector(`.domino[data-index="${touchState.index}"]`);
     if(dominoEl) dominoEl.classList.remove('dragging');
 
-    // If it was a drag, handle the drop
     if (touchState.isDragging) {
         const handRect = playerHandEl.getBoundingClientRect();
         const lastTouch = e.changedTouches[0];
         
-        // Boundary check for touch drop
         if (lastTouch.clientX >= handRect.left && lastTouch.clientX <= handRect.right && lastTouch.clientY >= handRect.top && lastTouch.clientY <= handRect.bottom) {
             const finalX = lastTouch.clientX - handRect.left - (dominoEl.clientWidth / 2);
             const finalY = lastTouch.clientY - handRect.top - (dominoEl.clientHeight / 2);
@@ -715,7 +713,7 @@ function handleTouchEnd(e) {
         }
         renderPlayerHand();
 
-    } else { // If it wasn't a drag, it was a tap/click
+    } else {
         const domino = gameState.players[0].hand[touchState.index];
         document.querySelectorAll('.domino.selected').forEach(d => d.classList.remove('selected'));
         dominoEl.classList.add('selected');
@@ -723,7 +721,6 @@ function handleTouchEnd(e) {
         updatePlayableTrains();
     }
     
-    // Reset state
     touchState.active = false;
     touchState.index = null;
     touchState.isDragging = false;
