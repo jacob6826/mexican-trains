@@ -26,12 +26,13 @@ let touchState = {
     index: null,
     startX: 0,
     startY: 0,
-    dominoInitialX: 0,
-    dominoInitialY: 0,
+    currentX: 0,
+    currentY: 0,
     active: false,
     isDragging: false
 };
 let lastTap = { time: 0, index: null };
+let animationFrameId = null;
 
 
 // --- Game Logic ---
@@ -645,7 +646,20 @@ function handleDrop(e) {
     renderPlayerHand();
 }
 
-// --- Touch Handlers (UPDATED FOR PERFORMANCE) ---
+// --- Touch Handlers using requestAnimationFrame ---
+function updateDragPosition() {
+    if (!touchState.active || !touchState.isDragging) return;
+
+    const dominoEl = document.querySelector(`.domino[data-index="${touchState.index}"]`);
+    if (dominoEl) {
+        const deltaX = touchState.currentX - touchState.startX;
+        const deltaY = touchState.currentY - touchState.startY;
+        dominoEl.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    }
+    
+    animationFrameId = requestAnimationFrame(updateDragPosition);
+}
+
 function handleTouchStart(e) {
     const dominoEl = e.target.closest('.domino');
     if (!dominoEl) return;
@@ -653,14 +667,14 @@ function handleTouchStart(e) {
 
     const index = parseInt(dominoEl.dataset.index);
     const touch = e.touches[0];
-    const domino = gameState.players[0].hand[index];
 
     touchState = {
+        ...touchState,
         index: index,
         startX: touch.clientX,
         startY: touch.clientY,
-        dominoInitialX: domino.x,
-        dominoInitialY: domino.y,
+        currentX: touch.clientX,
+        currentY: touch.clientY,
         active: true,
         isDragging: false
     };
@@ -672,44 +686,46 @@ function handleTouchMove(e) {
     e.preventDefault();
 
     const touch = e.touches[0];
-    const deltaX = touch.clientX - touchState.startX;
-    const deltaY = touch.clientY - touchState.startY;
+    touchState.currentX = touch.clientX;
+    touchState.currentY = touch.clientY;
 
-    if (Math.abs(deltaX) > 5 || Math.abs(deltaY) > 5) {
-        touchState.isDragging = true;
-    }
-    
-    if (touchState.isDragging) {
-        const dominoEl = document.querySelector(`.domino[data-index="${touchState.index}"]`);
-        if (dominoEl) {
-            // Use transform for smooth, hardware-accelerated movement
-            dominoEl.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+    if (!touchState.isDragging) {
+        const deltaX = Math.abs(touchState.currentX - touchState.startX);
+        const deltaY = Math.abs(touchState.currentY - touchState.startY);
+        if (deltaX > 5 || deltaY > 5) {
+            touchState.isDragging = true;
+            animationFrameId = requestAnimationFrame(updateDragPosition);
         }
     }
 }
 
 function handleTouchEnd(e) {
     if (!touchState.active) return;
+    
+    cancelAnimationFrame(animationFrameId);
 
     const dominoEl = document.querySelector(`.domino[data-index="${touchState.index}"]`);
     if(dominoEl) {
         dominoEl.classList.remove('dragging');
-        dominoEl.style.transform = ''; // Reset transform
+        dominoEl.style.transform = '';
     }
 
     if (touchState.isDragging) {
         const handRect = playerHandEl.getBoundingClientRect();
         const lastTouch = e.changedTouches[0];
         
+        const dominoData = gameState.players[0].hand[touchState.index];
+        const initialDomino = { x: dominoData.x, y: dominoData.y };
+
         const deltaX = lastTouch.clientX - touchState.startX;
         const deltaY = lastTouch.clientY - touchState.startY;
 
-        const finalX = touchState.dominoInitialX + deltaX;
-        const finalY = touchState.dominoInitialY + deltaY;
+        const finalX = initialDomino.x + deltaX;
+        const finalY = initialDomino.y + deltaY;
         
         if (lastTouch.clientX >= handRect.left && lastTouch.clientX <= handRect.right && lastTouch.clientY >= handRect.top && lastTouch.clientY <= handRect.bottom) {
-            gameState.players[0].hand[touchState.index].x = finalX;
-            gameState.players[0].hand[touchState.index].y = finalY;
+            dominoData.x = finalX;
+            dominoData.y = finalY;
         }
         renderPlayerHand();
 
@@ -733,8 +749,6 @@ function handleTouchEnd(e) {
     }
     
     touchState.active = false;
-    touchState.index = null;
-    touchState.isDragging = false;
 }
 
 // --- Setup Modal & Dark Mode Logic ---
@@ -848,4 +862,4 @@ showModal(
     "Welcome to Mexican Train!",
     "The goal is to be the first to play all your dominoes. The player with the lowest score at the end wins. Click 'New Game' to begin!",
     "Got it!"
-);v
+);
