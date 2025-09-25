@@ -68,6 +68,22 @@
         @apply opacity-70 border-2 border-dashed border-gray-600 z-50;
     }
 
+    /* --- MISSING HORIZONTAL STYLES RESTORED --- */
+    .domino.horizontal {
+        @apply w-20 h-10 flex-row;
+    }
+    .domino.horizontal .domino-half {
+        @apply w-1/2 h-full;
+    }
+    .domino.horizontal .domino-divider {
+        @apply w-px h-4/5;
+    }
+    @media (max-width: 768px) {
+        .player-hand-container .domino.horizontal, .train-track .domino.horizontal {
+            @apply w-[70px] h-[35px];
+        }
+    }
+
     .domino-half {
         @apply w-full h-1/2 relative;
     }
@@ -81,6 +97,11 @@
     .pip {
         border: 1px solid var(--pip-border);
         @apply w-[7px] h-[7px] rounded-full;
+    }
+    @media (max-width: 768px) {
+        .player-hand-container .pip, .train-track .pip {
+            @apply w-[5px] h-[5px];
+        }
     }
     
     .pip-container { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 1px; place-items: center; }
@@ -168,4 +189,21 @@
     .pip-container[data-value="10"] { --pip-color: #6366F1; }
     .pip-container[data-value="11"] { --pip-color: #EC4899; }
     .pip-container[data-value="12"] { --pip-color: #A855F7; }
+
+    /* --- MISSING TRAIN STYLES RESTORED --- */
+    .train-track {
+        @apply flex items-center flex-grow overflow-hidden p-2 rounded-lg min-h-[56px] transition-all duration-200 ease-in-out;
+    }
+    .train-track.playable {
+        @apply bg-emerald-100 cursor-pointer border-2 border-dashed border-emerald-500;
+    }
+    .train-path {
+        @apply flex transition-transform duration-300 ease-in-out;
+    }
+    .train-path .domino, .train-track .domino {
+        @apply mr-0.5;
+    }
+    .player-hand-container {
+        position: absolute;
+    }
 }
