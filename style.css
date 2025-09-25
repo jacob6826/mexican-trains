@@ -183,19 +183,6 @@ p, span, div { color: var(--text-muted-color); }
 .pip-container[data-value="12"] .pip-11 { top: 85%; left: 25%; }
 .pip-container[data-value="12"] .pip-12 { top: 85%; left: 75%; }
 
-.train-track { display: flex; align-items: center; flex-grow: 1; overflow: hidden; padding: 0.5rem; border-radius: 0.5rem; min-height: 56px; transition: all 0.2s ease-in-out; }
-.train-track.playable { background-color: #D1FAE5; cursor: pointer; border: 2px dashed #10B981; }
-.train-path { display: flex; transition: transform 0.3s ease-in-out; }
-.train-path .domino, .train-track .domino { margin-right: 2px; }
-.player-hand-container { position: relative; border: 2px dashed #60A5FA; border-radius: 0.5rem; }
-.player-hand-container .domino { position: absolute; }
-#scoreboard-arrow.rotated { transform: rotate(180deg); }
-.setup-btn { background-color: #E5E7EB; color: #374151; font-weight: 700; padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #9CA3AF; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: all 0.2s ease-in-out; }
-.setup-btn:hover { background-color: #D1D5DB; }
-.setup-btn.selected { background-color: #3B82F6; color: white; border-color: #2563EB; }
-.setup-btn.selected:hover { background-color: #2563EB; }
-
-/* --- ROBUST TRAIN LAYOUT STYLES --- */
 .train-row {
     display: flex;
     flex-direction: column;
@@ -209,6 +196,17 @@ p, span, div { color: var(--text-muted-color); }
     display: flex;
     align-items: center;
 }
+.train-track { display: flex; align-items: center; flex-grow: 1; overflow: hidden; padding: 0.5rem; border-radius: 0.5rem; min-height: 56px; transition: all 0.2s ease-in-out; }
+.train-track.playable { background-color: #D1FAE5; cursor: pointer; border: 2px dashed #10B981; }
+.train-path { display: flex; transition: transform 0.3s ease-in-out; }
+.train-path .domino, .train-track .domino { margin-right: 2px; }
+.player-hand-container { position: relative; border: 2px dashed #60A5FA; border-radius: 0.5rem; }
+.player-hand-container .domino { position: absolute; }
+#scoreboard-arrow.rotated { transform: rotate(180deg); }
+.setup-btn { background-color: #E5E7EB; color: #374151; font-weight: 700; padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #9CA3AF; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: all 0.2s ease-in-out; }
+.setup-btn:hover { background-color: #D1D5DB; }
+.setup-btn.selected { background-color: #3B82F6; color: white; border-color: #2563EB; }
+.setup-btn.selected:hover { background-color: #2563EB; }
 
 @media (min-width: 768px) {
     .train-row {
@@ -224,5 +222,4 @@ p, span, div { color: var(--text-muted-color); }
     }
     .domino.horizontal { width: 70px; height: 35px; }
     .pip { width: 5px; height: 5px; }
-    .train-path .domino:not(:nth-last-child(-n+3)) { display: none; }
 }
