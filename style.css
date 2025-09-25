@@ -79,7 +79,7 @@ body {
     transition: all 0.2s ease-in-out;
     box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15), 0 0 8px rgba(173, 216, 230, 0), 0 2px 2px rgba(0,0,0,0.1);
     flex-shrink: 0;
-    will-change: transform; /* PERFORMANCE HINT */
+    will-change: transform;
 }
 .domino:hover {
     transform: translateY(-5px) scale(1.05);
@@ -323,14 +323,7 @@ body {
     .train-track {
         min-height: 48px;
     }
-    #boneyard {
-        width: 5rem;
-        height: 3rem;
-    }
-    #boneyard-count {
-        font-size: 1.25rem;
-    }
-
+    
     .train-path .domino:not(:nth-last-child(-n+3)) {
         display: none;
     }
