@@ -1,11 +1,132 @@
-{
-  "name": "mexican-train-dominoes",
-  "version": "1.0.0",
-  "description": "A Mexican Train Dominoes game.",
-  "scripts": {
-    "build": "npx tailwindcss -i ./src/input.css -o ./dist/style.css --minify"
-  },
-  "devDependencies": {
-    "tailwindcss": "^3.4.1"
-  }
+:root {
+    --bg-color: #f9fafb;
+    --text-color: #1f2937;
+    --text-muted-color: #6b7280;
+    --card-bg-color: #ffffff;
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --domino-bg: #FBFCFE;
+    --domino-border: #D1D5DB;
+    --divider-color: #9CA3AF;
+    --pip-border: #374151;
+    --toggle-bg: #e5e7eb;
+    --toggle-hover-bg: #d1d5db;
+    --modal-text: #1f2937;
+    --pip-color-0: #6B7280; --pip-color-1: #EF4444; --pip-color-2: #F97316; --pip-color-3: #F59E0B;
+    --pip-color-4: #84CC16; --pip-color-5: #22C55E; --pip-color-6: #10B981; --pip-color-7: #14B8A6;
+    --pip-color-8: #06B6D4; --pip-color-9: #3B82F6; --pip-color-10: #6366F1; --pip-color-11: #EC4899;
+    --pip-color-12: #A855F7;
+}
+body.dark-mode {
+    --bg-color: #111827;
+    --text-color: #d1d5db;
+    --text-muted-color: #9ca3af;
+    --card-bg-color: #1f2937;
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --domino-bg: #FBFCFE; 
+    --domino-border: #D1D5DB;
+    --divider-color: #9ca3af;
+    --pip-border: #374151;
+    --toggle-bg: #374151;
+    --toggle-hover-bg: #4b5563;
+}
+body {
+    font-family: 'Inter', sans-serif;
+    touch-action: manipulation;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+.card {
+    background-color: var(--card-bg-color);
+    box-shadow: var(--card-shadow);
+}
+h1, h2, h3 { color: var(--text-color); }
+p, span, div { color: var(--text-muted-color); }
+#player-domino-count, #boneyard-count, #scoreboard span, #scoreboard-header h2 { color: var(--text-color); }
+#dark-mode-toggle { background-color: var(--toggle-bg); }
+#dark-mode-toggle:hover { background-color: var(--toggle-hover-bg); }
+#modal .bg-white, #game-setup-modal .bg-white {
+    background-color: #ffffff;
+    color: var(--modal-text);
+}
+#modal h2, #game-setup-modal h2, #game-setup-modal h3 { color: var(--modal-text); }
+#scoreboard .bg-gray-50 { background-color: var(--bg-color); }
+#scoreboard-arrow { stroke: var(--text-color); }
+.player-hand-container { background-color: var(--bg-color); }
+.domino {
+    background-color: var(--domino-bg);
+    border: 1px solid var(--domino-border);
+    will-change: transform;
+    width: 40px; height: 80px;
+    border-radius: 0.5rem;
+    display: flex; flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 4px; cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    flex-shrink: 0;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15), 0 0 8px rgba(173, 216, 230, 0), 0 2px 2px rgba(0,0,0,0.1);
+}
+.domino:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15), 0 0 12px rgba(173, 216, 230, 0.8), 0 4px 8px rgba(0,0,0,0.2);
+}
+.domino.selected {
+    border-color: #3B82F6;
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15), 0 0 12px #3B82F6, 0 4px 8px rgba(0,0,0,0.2);
+}
+.domino.dragging { opacity: 0.7; border: 2px dashed #4B5563; z-index: 100; }
+.domino.horizontal { width: 80px; height: 40px; flex-direction: row; }
+.domino.horizontal .domino-half { width: 50%; height: 100%; }
+.domino.horizontal .domino-divider { width: 1px; height: 80%; }
+.domino-half { width: 100%; height: 50%; position: relative; }
+.domino-divider { height: 1px; width: 80%; background-color: var(--divider-color); }
+.pip {
+    border: 1px solid var(--pip-border);
+    width: 7px; height: 7px;
+    border-radius: 9999px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+.pip-container[data-value="0"] .pip { background-color: var(--pip-color-0); }
+.pip-container[data-value="1"] .pip { background-color: var(--pip-color-1); }
+.pip-container[data-value="2"] .pip { background-color: var(--pip-color-2); }
+.pip-container[data-value="3"] .pip { background-color: var(--pip-color-3); }
+.pip-container[data-value="4"] .pip { background-color: var(--pip-color-4); }
+.pip-container[data-value="5"] .pip { background-color: var(--pip-color-5); }
+.pip-container[data-value="6"] .pip { background-color: var(--pip-color-6); }
+.pip-container[data-value="7"] .pip { background-color: var(--pip-color-7); }
+.pip-container[data-value="8"] .pip { background-color: var(--pip-color-8); }
+.pip-container[data-value="9"] .pip { background-color: var(--pip-color-9); }
+.pip-container[data-value="10"] .pip { background-color: var(--pip-color-10); }
+.pip-container[data-value="11"] .pip { background-color: var(--pip-color-11); }
+.pip-container[data-value="12"] .pip { background-color: var(--pip-color-12); }
+.pip-container { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 1px; place-items: center; }
+.pip-container[data-value="1"] .pip-1 { grid-area: 2 / 2 / 4 / 3; } .pip-container[data-value="2"] .pip-1 { grid-area: 1 / 1; }
+.pip-container[data-value="2"] .pip-2 { grid-area: 4 / 3; } .pip-container[data-value="3"] .pip-1 { grid-area: 1 / 1; }
+.pip-container[data-value="3"] .pip-2 { grid-area: 2 / 2 / 4 / 3; } .pip-container[data-value="3"] .pip-3 { grid-area: 4 / 3; }
+.pip-container[data-value="4"] .pip-1 { grid-area: 1 / 1; } .pip-container[data-value="4"] .pip-2 { grid-area: 1 / 3; }
+.pip-container[data-value="4"] .pip-3 { grid-area: 4 / 1; } .pip-container[data-value="4"] .pip-4 { grid-area: 4 / 3; }
+.pip-container[data-value="5"] .pip-1 { grid-area: 1 / 1; } .pip-container[data-value="5"] .pip-2 { grid-area: 1 / 3; }
+.pip-container[data-value="5"] .pip-3 { grid-area: 2 / 2 / 4 / 3; } .pip-container[data-value="5"] .pip-4 { grid-area: 4 / 1; }
+.pip-container[data-value="5"] .pip-5 { grid-area: 4 / 3; } .pip-container[data-value="6"] .pip-1 { grid-area: 1 / 1; }
+.pip-container[data-value="6"] .pip-2 { grid-area: 1 / 3; } .pip-container[data-value="6"] .pip-3 { grid-area: 2 / 1 / 4 / 2; }
+.pip-container[data-value="6"] .pip-4 { grid-area: 2 / 3 / 4 / 4; } .pip-container[data-value="6"] .pip-5 { grid-area: 4 / 1; }
+.pip-container[data-value="6"] .pip-6 { grid-area: 4 / 3; }
+.train-track { display: flex; align-items: center; flex-grow: 1; overflow: hidden; padding: 0.5rem; border-radius: 0.5rem; min-height: 56px; transition: all 0.2s ease-in-out; }
+.train-track.playable { background-color: #D1FAE5; cursor: pointer; border: 2px dashed #10B981; }
+.train-path { display: flex; transition: transform 0.3s ease-in-out; }
+.train-path .domino, .train-track .domino { margin-right: 2px; }
+.player-hand-container { position: relative; border: 2px dashed #60A5FA; border-radius: 0.5rem; }
+.player-hand-container .domino { position: absolute; }
+#scoreboard-arrow.rotated { transform: rotate(180deg); }
+.setup-btn { background-color: #E5E7EB; color: #374151; font-weight: 700; padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1px solid #9CA3AF; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); transition: all 0.2s ease-in-out; }
+.setup-btn:hover { background-color: #D1D5DB; }
+.setup-btn.selected { background-color: #3B82F6; color: white; border-color: #2563EB; }
+.setup-btn.selected:hover { background-color: #2563EB; }
+@media (max-width: 768px) {
+    .domino.horizontal { width: 70px; height: 35px; }
+    .pip { width: 5px; height: 5px; }
+    .train-path .domino:not(:nth-last-child(-n+3)) { display: none; }
 }
