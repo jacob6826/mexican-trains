@@ -199,7 +199,7 @@ function initGame(isNewGame = true) {
     gameState.isRoundOver = false;
     gameState.currentPlayer = 0;
     gameState.selectedDomino = null;
-    gameState.mustSatisfyDouble = null; // New state for unsatisfied doubles
+    gameState.mustSatisfyDouble = null;
     
     scoreboardEl.classList.add('hidden');
     scoreboardArrow.classList.remove('rotated');
@@ -386,7 +386,7 @@ function handleTrainClick(e) {
             gameStatusEl.textContent = "You played a double! Play another domino.";
             if(!canPlayerPlay(0)){
                 showModal("Double Trouble", "You can't satisfy your double. You must draw.", "Draw", () => {
-                    handleBoneyardClick(trainKey); // Pass trainKey to handleBoneyardClick
+                    handleBoneyardClick(trainKey);
                 });
             }
         }
@@ -518,7 +518,9 @@ function nextTurn() {
         statusText = `${gameState.players[gameState.currentPlayer].name}'s turn.`;
     }
     if (gameState.mustSatisfyDouble) {
-        statusText += ` Must satisfy the double on ${gameState.trains[gameState.mustSatisfyDouble].owner === null ? 'the Mexican Train' : gameState.players[gameState.trains[gameState.mustSatisfyDouble].owner].name + "'s train"}.`;
+        const trainOwner = gameState.trains[gameState.mustSatisfyDouble].owner;
+        const ownerName = trainOwner === null ? 'the Mexican Train' : `${gameState.players[trainOwner].name}'s train`;
+        statusText += ` Must satisfy the double on ${ownerName}.`;
     }
     gameStatusEl.textContent = statusText;
 
@@ -543,7 +545,7 @@ function handleAITurn() {
                  gameState.mustSatisfyDouble = move.trainKey;
                  renderAll();
             }
-            setTimeout(() => handleAITurn(!canSatisfy), 1000); // Pass true if AI couldn't satisfy its own double
+            setTimeout(() => handleAITurn(!canSatisfy), 1000);
             return;
         }
     } else {
