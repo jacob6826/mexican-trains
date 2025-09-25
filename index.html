@@ -11,14 +11,19 @@
 <body class="bg-gray-100 text-gray-800">
 
     <div id="game-container" class="p-4 max-w-7xl mx-auto">
-        <header class="relative text-center mb-4 p-4">
-            <button id="new-game-btn" class="absolute top-4 left-4 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow">New Game</button>
-            
-            <h1 class="text-3xl font-bold text-gray-700 px-24 md:px-0">Mexican Train Dominoes</h1>
-            
-            <button id="dark-mode-toggle" class="absolute top-4 right-4 w-12 h-10 text-2xl rounded-lg flex items-center justify-center bg-gray-200 hover:bg-gray-300"></button>
+        <header class="flex items-center justify-between mb-4 p-4">
+            <div class="w-32 text-left">
+                <button id="new-game-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow">New Game</button>
+            </div>
 
-            <p id="game-status" class="text-lg text-gray-500 mt-1">Setting up the game...</p>
+            <div class="text-center">
+                 <h1 class="text-xl sm:text-3xl font-bold text-gray-700">Mexican Train Dominoes</h1>
+                 <p id="game-status" class="text-sm sm:text-lg text-gray-500 mt-1">Setting up the game...</p>
+            </div>
+
+            <div class="w-32 text-right">
+                <button id="dark-mode-toggle" class="w-12 h-10 text-2xl rounded-lg inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300"></button>
+            </div>
         </header>
 
         <div id="game-board" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
