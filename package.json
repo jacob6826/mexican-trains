@@ -1,1 +1,11 @@
-
+{
+  "name": "mexican-train-dominoes",
+  "version": "1.0.0",
+  "description": "A Mexican Train Dominoes game.",
+  "scripts": {
+    "build": "npx tailwindcss -i ./src/input.css -o ./dist/style.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
