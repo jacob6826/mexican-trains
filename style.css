@@ -17,12 +17,12 @@ body.dark-mode {
     --bg-color: #111827; /* gray-900 */
     --text-color: #d1d5db; /* gray-300 */
     --text-muted-color: #9ca3af; /* gray-400 */
-    --card-bg-color: #1f2937; /* gray-800 */
+    --card-bg-color: #111827; /* gray-900 | UNIFIED DARK BACKGROUND */
     --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-    --domino-bg: #374151; /* gray-700 */
-    --domino-border: #6b7280; /* gray-500 */
+    --domino-bg: #FBFCFE; /* WHITE DOMINOES */
+    --domino-border: #D1D5DB; /* LIGHT BORDER */
     --divider-color: #9ca3af; /* gray-400 */
-    --pip-border: #d1d5db; /* gray-300 */
+    --pip-border: #374151; /* DARK PIP BORDER FOR CONTRAST */
     --toggle-bg: #374151;
     --toggle-hover-bg: #4b5563;
     --modal-text: #1f2937;
