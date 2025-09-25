@@ -17,7 +17,7 @@ body.dark-mode {
     --bg-color: #111827; /* gray-900 */
     --text-color: #d1d5db; /* gray-300 */
     --text-muted-color: #9ca3af; /* gray-400 */
-    --card-bg-color: #1f2937; /* gray-800 | UPDATED */
+    --card-bg-color: #1f2937; /* gray-800 */
     --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --domino-bg: #FBFCFE; 
     --domino-border: #D1D5DB;
@@ -41,7 +41,6 @@ body {
 #game-container p, #game-container h2, #game-container h3, #game-container span { color: var(--text-muted-color); }
 #player-domino-count, #boneyard-count, #scoreboard span, #scoreboard-header h2 { color: var(--text-color); }
 
-/* --- NEW .card SELECTOR --- */
 .card {
     background-color: var(--card-bg-color);
     box-shadow: var(--card-shadow);
@@ -54,7 +53,7 @@ body {
     background-color: var(--toggle-hover-bg);
 }
 #modal .bg-white, #game-setup-modal .bg-white {
-    background-color: #ffffff; /* Modals stay light for readability */
+    background-color: #ffffff;
     color: var(--modal-text);
 }
 #modal h2, #game-setup-modal h2, #game-setup-modal h3 { color: var(--modal-text); }
@@ -80,6 +79,7 @@ body {
     transition: all 0.2s ease-in-out;
     box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15), 0 0 8px rgba(173, 216, 230, 0), 0 2px 2px rgba(0,0,0,0.1);
     flex-shrink: 0;
+    will-change: transform; /* PERFORMANCE HINT */
 }
 .domino:hover {
     transform: translateY(-5px) scale(1.05);
