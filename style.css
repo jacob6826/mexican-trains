@@ -198,8 +198,14 @@ p, span, div { color: var(--text-muted-color); }
 }
 .train-track { display: flex; align-items: center; flex-grow: 1; overflow: hidden; padding: 0.5rem; border-radius: 0.5rem; min-height: 56px; transition: all 0.2s ease-in-out; }
 .train-track.playable { background-color: #D1FAE5; cursor: pointer; border: 2px dashed #10B981; }
-.train-path { display: flex; transition: transform 0.3s ease-in-out; }
+.train-path { display: flex; } /* No transition needed */
 .train-path .domino, .train-track .domino { margin-right: 2px; }
+
+/* --- NEW RULE TO HIDE EXCESS DOMINOES --- */
+.train-path .domino:not(:nth-last-child(-n+3)) {
+    display: none;
+}
+
 .player-hand-container { position: relative; border: 2px dashed #60A5FA; border-radius: 0.5rem; }
 .player-hand-container .domino { position: absolute; }
 #scoreboard-arrow.rotated { transform: rotate(180deg); }
