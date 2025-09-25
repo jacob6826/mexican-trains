@@ -1,12 +1,72 @@
+:root {
+    --bg-color: #f9fafb; /* gray-50 */
+    --text-color: #1f2937; /* gray-800 */
+    --text-muted-color: #6b7280; /* gray-500 */
+    --card-bg-color: #ffffff; /* white */
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --domino-bg: #FBFCFE;
+    --domino-border: #D1D5DB;
+    --divider-color: #9CA3AF;
+    --pip-border: #374151;
+    --toggle-bg: #e5e7eb;
+    --toggle-hover-bg: #d1d5db;
+    --modal-text: #1f2937;
+}
+
+body.dark-mode {
+    --bg-color: #111827; /* gray-900 */
+    --text-color: #d1d5db; /* gray-300 */
+    --text-muted-color: #9ca3af; /* gray-400 */
+    --card-bg-color: #1f2937; /* gray-800 */
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --domino-bg: #374151; /* gray-700 */
+    --domino-border: #6b7280; /* gray-500 */
+    --divider-color: #9ca3af; /* gray-400 */
+    --pip-border: #d1d5db; /* gray-300 */
+    --toggle-bg: #374151;
+    --toggle-hover-bg: #4b5563;
+    --modal-text: #1f2937;
+}
+
 body {
     font-family: 'Inter', sans-serif;
     touch-action: manipulation;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
+
+/* Update UI components to use CSS variables */
+#game-container h1 { color: var(--text-color); }
+#game-container p, #game-container h2, #game-container h3, #game-container span { color: var(--text-muted-color); }
+#player-domino-count, #boneyard-count, #scoreboard span, #scoreboard-header h2 { color: var(--text-color); }
+#board-area, #player-hand-area, .bg-white {
+    background-color: var(--card-bg-color);
+    box-shadow: var(--card-shadow);
+}
+#dark-mode-toggle {
+    background-color: var(--toggle-bg);
+}
+#dark-mode-toggle:hover {
+    background-color: var(--toggle-hover-bg);
+}
+#modal .bg-white, #game-setup-modal .bg-white {
+    background-color: #ffffff; /* Modals stay light for readability */
+    color: var(--modal-text);
+}
+#modal h2, #game-setup-modal h2, #game-setup-modal h3 { color: var(--modal-text); }
+.train-track .font-semibold { color: var(--text-color); }
+#scoreboard .bg-gray-50 {
+    background-color: var(--bg-color);
+}
+#scoreboard-arrow { stroke: var(--text-color); }
+.player-hand-container { background-color: var(--bg-color); }
+
 .domino {
     width: 40px;
     height: 80px;
-    border: 1px solid #D1D5DB;
-    background-color: #FBFCFE;
+    border: 1px solid var(--domino-border);
+    background-color: var(--domino-bg);
     border-radius: 8px;
     display: flex;
     flex-direction: column;
@@ -28,9 +88,9 @@ body {
     box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15), 0 0 12px #3B82F6, 0 4px 8px rgba(0,0,0,0.2);
 }
 .domino.dragging {
-    opacity: 0.5;
+    opacity: 0.7;
     border: 2px dashed #4B5563;
-    z-index: 100; 
+    z-index: 100;
 }
 .domino-half {
     width: 100%;
@@ -43,12 +103,12 @@ body {
 .domino-divider {
     height: 1px;
     width: 80%;
-    background-color: #9CA3AF;
+    background-color: var(--divider-color);
 }
 .pip {
     width: 7px;
     height: 7px;
-    border: 1px solid #374151;
+    border: 1px solid var(--pip-border);
     border-radius: 50%;
     position: absolute;
     transform: translate(-50%, -50%);
@@ -188,7 +248,6 @@ body {
     position: relative;
     border: 2px dashed #60A5FA;
     border-radius: 8px;
-    background-color: #EFF6FF;
 }
 
 .player-hand-container .domino {
@@ -269,8 +328,6 @@ body {
         font-size: 1.25rem;
     }
 
-    /* --- UPDATED RULE FOR MOBILE TRAINS --- */
-    /* Hides all but the last 3 dominoes in the train path */
     .train-path .domino:not(:nth-last-child(-n+3)) {
         display: none;
     }
