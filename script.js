@@ -30,6 +30,7 @@ let touchState = {
     active: false,
     isDragging: false
 };
+let lastTap = { time: 0, index: null }; // For double-tap detection
 
 
 // --- Game Logic ---
@@ -216,13 +217,9 @@ function renderAll() {
 function createTrainRow(key, labelText) {
     const train = gameState.trains[key];
     const trackRow = document.createElement('div');
-    // --- RESPONSIVE LAYOUT CHANGE ---
-    // Default to column layout, switch to row on medium screens and up
     trackRow.className = 'flex flex-col md:flex-row md:items-center py-2';
 
     const label = document.createElement('div');
-    // --- RESPONSIVE LAYOUT CHANGE ---
-    // Default to left-aligned, full-width. Switch to fixed-width, right-aligned on medium up.
     label.className = 'w-full text-left text-sm md:text-base font-semibold text-gray-600 shrink-0 flex items-center justify-start md:w-48 md:justify-end md:text-right md:pr-4';
     label.textContent = labelText;
 
@@ -254,7 +251,6 @@ function createTrainRow(key, labelText) {
     trainTrack.appendChild(engineEl);
     trainTrack.appendChild(pathContainer);
     
-    // Add label first, then the track
     trackRow.appendChild(label);
     trackRow.appendChild(trainTrack);
 
@@ -262,7 +258,6 @@ function createTrainRow(key, labelText) {
         const marker = document.createElement('span');
         marker.className = 'text-2xl ml-2';
         marker.textContent = '🚂';
-        // Append marker to the label div
         label.appendChild(marker);
     }
     return trackRow;
@@ -713,18 +708,32 @@ function handleTouchEnd(e) {
         }
         renderPlayerHand();
 
-    } else {
-        const domino = gameState.players[0].hand[touchState.index];
-        document.querySelectorAll('.domino.selected').forEach(d => d.classList.remove('selected'));
-        dominoEl.classList.add('selected');
-        gameState.selectedDomino = domino;
-        updatePlayableTrains();
+    } else { // --- DOUBLE TAP LOGIC ADDED ---
+        const currentTime = Date.now();
+        const dominoIndex = touchState.index;
+
+        if (lastTap.index === dominoIndex && (currentTime - lastTap.time) < 300) {
+            // Double tap: Flip the domino
+            const handDomino = gameState.players[0].hand[dominoIndex];
+            [handDomino.v1, handDomino.v2] = [handDomino.v2, handDomino.v1];
+            renderPlayerHand();
+            lastTap = { time: 0, index: null }; // Reset tap
+        } else {
+            // Single tap: Select the domino
+            const domino = gameState.players[0].hand[dominoIndex];
+            document.querySelectorAll('.domino.selected').forEach(d => d.classList.remove('selected'));
+            dominoEl.classList.add('selected');
+            gameState.selectedDomino = domino;
+            updatePlayableTrains();
+            lastTap = { time: currentTime, index: dominoIndex }; // Record tap
+        }
     }
     
     touchState.active = false;
     touchState.index = null;
     touchState.isDragging = false;
 }
+
 
 // --- Setup Modal Logic ---
 function updateSetupState() {
