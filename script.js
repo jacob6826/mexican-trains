@@ -27,7 +27,8 @@ let touchState = {
     startY: 0,
     dominoInitialX: 0,
     dominoInitialY: 0,
-    active: false
+    active: false,
+    isDragging: false // New flag to differentiate tap vs drag
 };
 
 
@@ -240,8 +241,6 @@ function createTrainRow(key, labelText) {
     const dominoWidth = window.innerWidth < 768 ? 70 : 80;
     const isMobile = window.innerWidth <= 768;
 
-    // --- LOGIC UPDATED ---
-    // Only apply horizontal slide on non-mobile screens
     if (!isMobile && train.path.length > 3) {
         const offset = (train.path.length - 3) * (dominoWidth + 2); // width + margin
         pathContainer.style.transform = `translateX(-${offset}px)`;
@@ -637,15 +636,19 @@ function handleDrop(e) {
     if (draggedState.index === null) return;
     
     const handRect = playerHandEl.getBoundingClientRect();
-    const dominoToMove = gameState.players[0].hand[draggedState.index];
-
-    dominoToMove.x = e.clientX - handRect.left - draggedState.offsetX;
-    dominoToMove.y = e.clientY - handRect.top - draggedState.offsetY;
-
+    
+    // --- BOUNDARY CHECK ADDED ---
+    if (e.clientX >= handRect.left && e.clientX <= handRect.right && e.clientY >= handRect.top && e.clientY <= handRect.bottom) {
+        const dominoToMove = gameState.players[0].hand[draggedState.index];
+        dominoToMove.x = e.clientX - handRect.left - draggedState.offsetX;
+        dominoToMove.y = e.clientY - handRect.top - draggedState.offsetY;
+    }
+    
+    // Always re-render to snap back if dropped outside
     renderPlayerHand();
 }
 
-// --- NEW Touch Handlers for Mobile Dragging ---
+// --- Touch Handlers for Mobile Dragging (UPDATED) ---
 function handleTouchStart(e) {
     const dominoEl = e.target.closest('.domino');
     if (!dominoEl) return;
@@ -661,7 +664,8 @@ function handleTouchStart(e) {
         startY: touch.clientY,
         dominoInitialX: domino.x,
         dominoInitialY: domino.y,
-        active: true
+        active: true,
+        isDragging: false // Reset dragging flag
     };
     dominoEl.classList.add('dragging');
 }
@@ -671,16 +675,23 @@ function handleTouchMove(e) {
     e.preventDefault();
 
     const touch = e.touches[0];
-    const deltaX = touch.clientX - touchState.startX;
-    const deltaY = touch.clientY - touchState.startY;
+    const deltaX = Math.abs(touch.clientX - touchState.startX);
+    const deltaY = Math.abs(touch.clientY - touchState.startY);
 
-    const newX = touchState.dominoInitialX + deltaX;
-    const newY = touchState.dominoInitialY + deltaY;
+    // If finger moves more than a few pixels, register it as a drag
+    if (deltaX > 5 || deltaY > 5) {
+        touchState.isDragging = true;
+    }
+    
+    if (touchState.isDragging) {
+        const newX = touchState.dominoInitialX + (touch.clientX - touchState.startX);
+        const newY = touchState.dominoInitialY + (touch.clientY - touchState.startY);
 
-    const dominoEl = document.querySelector(`.domino[data-index="${touchState.index}"]`);
-    if (dominoEl) {
-        dominoEl.style.left = `${newX}px`;
-        dominoEl.style.top = `${newY}px`;
+        const dominoEl = document.querySelector(`.domino[data-index="${touchState.index}"]`);
+        if (dominoEl) {
+            dominoEl.style.left = `${newX}px`;
+            dominoEl.style.top = `${newY}px`;
+        }
     }
 }
 
@@ -688,20 +699,35 @@ function handleTouchEnd(e) {
     if (!touchState.active) return;
 
     const dominoEl = document.querySelector(`.domino[data-index="${touchState.index}"]`);
-    if (dominoEl) {
-        dominoEl.classList.remove('dragging');
-        
+    if(dominoEl) dominoEl.classList.remove('dragging');
+
+    // If it was a drag, handle the drop
+    if (touchState.isDragging) {
         const handRect = playerHandEl.getBoundingClientRect();
-        const finalX = dominoEl.getBoundingClientRect().left - handRect.left;
-        const finalY = dominoEl.getBoundingClientRect().top - handRect.top;
-        gameState.players[0].hand[touchState.index].x = finalX;
-        gameState.players[0].hand[touchState.index].y = finalY;
+        const lastTouch = e.changedTouches[0];
+        
+        // Boundary check for touch drop
+        if (lastTouch.clientX >= handRect.left && lastTouch.clientX <= handRect.right && lastTouch.clientY >= handRect.top && lastTouch.clientY <= handRect.bottom) {
+            const finalX = lastTouch.clientX - handRect.left - (dominoEl.clientWidth / 2);
+            const finalY = lastTouch.clientY - handRect.top - (dominoEl.clientHeight / 2);
+            gameState.players[0].hand[touchState.index].x = finalX;
+            gameState.players[0].hand[touchState.index].y = finalY;
+        }
+        renderPlayerHand();
+
+    } else { // If it wasn't a drag, it was a tap/click
+        const domino = gameState.players[0].hand[touchState.index];
+        document.querySelectorAll('.domino.selected').forEach(d => d.classList.remove('selected'));
+        dominoEl.classList.add('selected');
+        gameState.selectedDomino = domino;
+        updatePlayableTrains();
     }
     
+    // Reset state
     touchState.active = false;
     touchState.index = null;
+    touchState.isDragging = false;
 }
-
 
 // --- Setup Modal Logic ---
 function updateSetupState() {
