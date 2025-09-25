@@ -367,6 +367,10 @@ function handleTrainClick(e) {
         gameState.selectedDomino = null;
         renderAll();
         
+        // --- BUG FIX ADDED HERE ---
+        // If playing the domino ended the round, stop immediately.
+        if (gameState.isRoundOver) return;
+
         if (!domino.isDouble) {
             setTimeout(nextTurn, 500);
         } else {
