@@ -28,6 +28,8 @@ let touchState = {
     startY: 0,
     currentX: 0,
     currentY: 0,
+    dominoInitialX: 0,
+    dominoInitialY: 0,
     active: false,
     isDragging: false
 };
@@ -721,6 +723,7 @@ function handleTouchStart(e) {
 
     const index = parseInt(dominoEl.dataset.index);
     const touch = e.touches[0];
+    const domino = gameState.players[0].hand[index];
 
     touchState = {
         ...touchState,
@@ -729,6 +732,8 @@ function handleTouchStart(e) {
         startY: touch.clientY,
         currentX: touch.clientX,
         currentY: touch.clientY,
+        dominoInitialX: domino.x,
+        dominoInitialY: domino.y,
         active: true,
         isDragging: false
     };
@@ -768,18 +773,15 @@ function handleTouchEnd(e) {
         const handRect = playerHandEl.getBoundingClientRect();
         const lastTouch = e.changedTouches[0];
         
-        const dominoData = gameState.players[0].hand[touchState.index];
-        const initialDomino = { x: dominoData.x, y: dominoData.y };
-
         const deltaX = lastTouch.clientX - touchState.startX;
         const deltaY = lastTouch.clientY - touchState.startY;
 
-        const finalX = initialDomino.x + deltaX;
-        const finalY = initialDomino.y + deltaY;
+        const finalX = touchState.dominoInitialX + deltaX;
+        const finalY = touchState.dominoInitialY + deltaY;
         
         if (lastTouch.clientX >= handRect.left && lastTouch.clientX <= handRect.right && lastTouch.clientY >= handRect.top && lastTouch.clientY <= handRect.bottom) {
-            dominoData.x = finalX;
-            dominoData.y = finalY;
+            gameState.players[0].hand[touchState.index].x = finalX;
+            gameState.players[0].hand[touchState.index].y = finalY;
         }
         renderPlayerHand();
 
