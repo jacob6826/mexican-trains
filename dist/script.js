@@ -667,6 +667,7 @@ function endGame() {
 // --- Drag and Drop Handlers ---
 function handleDragStart(e) {
     const dominoEl = e.target.closest('.domino');
+    if (!dominoEl) return;
     draggedState.index = parseInt(dominoEl.dataset.index);
     draggedState.offsetX = e.clientX - dominoEl.getBoundingClientRect().left;
     draggedState.offsetY = e.clientY - dominoEl.getBoundingClientRect().top;
@@ -692,9 +693,9 @@ function handleDrop(e) {
     if (draggedState.index === null) return;
     
     const handRect = playerHandEl.getBoundingClientRect();
+    const dominoToMove = gameState.players[0].hand[draggedState.index];
 
     if (e.clientX >= handRect.left && e.clientX <= handRect.right && e.clientY >= handRect.top && e.clientY <= handRect.bottom) {
-        const dominoToMove = gameState.players[0].hand[draggedState.index];
         dominoToMove.x = e.clientX - handRect.left - draggedState.offsetX;
         dominoToMove.y = e.clientY - handRect.top - draggedState.offsetY;
     }
@@ -780,9 +781,11 @@ function handleTouchEnd(e) {
         const finalY = touchState.dominoInitialY + deltaY;
         
         if (lastTouch.clientX >= handRect.left && lastTouch.clientX <= handRect.right && lastTouch.clientY >= handRect.top && lastTouch.clientY <= handRect.bottom) {
+            // THIS IS THE FIX: Directly update the game state.
             gameState.players[0].hand[touchState.index].x = finalX;
             gameState.players[0].hand[touchState.index].y = finalY;
         }
+        // Always re-render to snap back if dropped outside, or to confirm position if inside.
         renderPlayerHand();
 
     } else {
