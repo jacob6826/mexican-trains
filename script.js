@@ -21,6 +21,15 @@ let draggedState = {
     offsetX: 0,
     offsetY: 0
 };
+let touchState = {
+    index: null,
+    startX: 0,
+    startY: 0,
+    dominoInitialX: 0,
+    dominoInitialY: 0,
+    active: false
+};
+
 
 // --- Game Logic ---
 function createDomino(v1, v2) {
@@ -78,7 +87,6 @@ function createDominoElement(domino, isHorizontal = false) {
     return el;
 }
 
-// --- NEW HELPER FUNCTION ---
 function calculateNewDominoPosition(hand) {
     const newIndex = hand.length - 1;
     const containerWidth = playerHandEl.clientWidth;
@@ -230,9 +238,15 @@ function createTrainRow(key, labelText) {
     });
 
     const dominoWidth = window.innerWidth < 768 ? 70 : 80;
-    if (train.path.length > 3) {
+    const isMobile = window.innerWidth <= 768;
+
+    // --- LOGIC UPDATED ---
+    // Only apply horizontal slide on non-mobile screens
+    if (!isMobile && train.path.length > 3) {
         const offset = (train.path.length - 3) * (dominoWidth + 2); // width + margin
         pathContainer.style.transform = `translateX(-${offset}px)`;
+    } else {
+        pathContainer.style.transform = `translateX(0px)`;
     }
 
     trainTrack.appendChild(engineEl);
@@ -432,7 +446,6 @@ function handleBoneyardClick() {
         const playerHand = gameState.players[0].hand;
         playerHand.push(newDomino);
 
-        // --- CODE CONSOLIDATED ---
         const pos = calculateNewDominoPosition(playerHand);
         newDomino.x = pos.x;
         newDomino.y = pos.y;
@@ -532,14 +545,10 @@ function findBestAIMove(playerIndex, specificDomino = null) {
                 const endValue = getTrainEndValue(train);
                 if (domino.v1 === endValue || domino.v2 === endValue) {
                     let score = 0;
-                    // --- AI SCORING LOGIC UPDATED ---
-                    // Prioritize playing high-value dominoes to reduce points in hand
                     score += domino.v1 + domino.v2;
-
-                    if (key === `player${playerIndex}`) score += 5; // Prefer own train
-                    if (key === 'mexican') score += 2; // Prefer Mexican train over others'
-                    if (domino.isDouble) score -= 10; // Avoid playing doubles unless it's a good move otherwise
-                    
+                    if (key === `player${playerIndex}`) score += 5;
+                    if (key === 'mexican') score += 2;
+                    if (domino.isDouble) score -= 10;
                     possibleMoves.push({ domino, trainKey: key, score });
                 }
             }
@@ -636,6 +645,64 @@ function handleDrop(e) {
     renderPlayerHand();
 }
 
+// --- NEW Touch Handlers for Mobile Dragging ---
+function handleTouchStart(e) {
+    const dominoEl = e.target.closest('.domino');
+    if (!dominoEl) return;
+    e.preventDefault();
+
+    const index = parseInt(dominoEl.dataset.index);
+    const touch = e.touches[0];
+    const domino = gameState.players[0].hand[index];
+
+    touchState = {
+        index: index,
+        startX: touch.clientX,
+        startY: touch.clientY,
+        dominoInitialX: domino.x,
+        dominoInitialY: domino.y,
+        active: true
+    };
+    dominoEl.classList.add('dragging');
+}
+
+function handleTouchMove(e) {
+    if (!touchState.active) return;
+    e.preventDefault();
+
+    const touch = e.touches[0];
+    const deltaX = touch.clientX - touchState.startX;
+    const deltaY = touch.clientY - touchState.startY;
+
+    const newX = touchState.dominoInitialX + deltaX;
+    const newY = touchState.dominoInitialY + deltaY;
+
+    const dominoEl = document.querySelector(`.domino[data-index="${touchState.index}"]`);
+    if (dominoEl) {
+        dominoEl.style.left = `${newX}px`;
+        dominoEl.style.top = `${newY}px`;
+    }
+}
+
+function handleTouchEnd(e) {
+    if (!touchState.active) return;
+
+    const dominoEl = document.querySelector(`.domino[data-index="${touchState.index}"]`);
+    if (dominoEl) {
+        dominoEl.classList.remove('dragging');
+        
+        const handRect = playerHandEl.getBoundingClientRect();
+        const finalX = dominoEl.getBoundingClientRect().left - handRect.left;
+        const finalY = dominoEl.getBoundingClientRect().top - handRect.top;
+        gameState.players[0].hand[touchState.index].x = finalX;
+        gameState.players[0].hand[touchState.index].y = finalY;
+    }
+    
+    touchState.active = false;
+    touchState.index = null;
+}
+
+
 // --- Setup Modal Logic ---
 function updateSetupState() {
     const startBtn = document.getElementById('start-game-btn');
@@ -650,7 +717,6 @@ function updateSetupState() {
 
 function promptNewGame() {
     setupState = {};
-    // Reset UI
     document.querySelectorAll('#game-setup-modal .setup-btn.selected').forEach(el => el.classList.remove('selected'));
     document.getElementById('setup-rounds-section').classList.add('hidden');
     document.getElementById('setup-players-section').classList.add('hidden');
@@ -674,7 +740,7 @@ document.getElementById('setup-game-mode').addEventListener('click', e => {
         document.getElementById('setup-rounds-section').classList.remove('hidden');
     } else {
         document.getElementById('setup-rounds-section').classList.add('hidden');
-        setupState.rounds = 13; // Traditional is always 13
+        setupState.rounds = 13;
         document.getElementById('setup-players-section').classList.remove('hidden');
     }
     updateSetupState();
@@ -710,10 +776,16 @@ document.getElementById('board-area').addEventListener('click', handleTrainClick
 boneyardEl.addEventListener('click', handleBoneyardClick);
 newGameBtn.addEventListener('click', promptNewGame);
 
+// Desktop Drag Events
 playerHandEl.addEventListener('dragstart', handleDragStart);
 playerHandEl.addEventListener('dragend', handleDragEnd);
 playerHandEl.addEventListener('dragover', handleDragOver);
 playerHandEl.addEventListener('drop', handleDrop);
+
+// Mobile Touch Events
+playerHandEl.addEventListener('touchstart', handleTouchStart, { passive: false });
+playerHandEl.addEventListener('touchmove', handleTouchMove, { passive: false });
+playerHandEl.addEventListener('touchend', handleTouchEnd);
 
 // --- Initial Load ---
 showModal(
