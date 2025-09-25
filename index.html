@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mexican Train Dominoes</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -17,7 +17,6 @@
             </div>
             <div class="text-center">
                  <h1 class="text-xl sm:text-3xl font-bold text-gray-700">Mexican Train Dominoes</h1>
-                 <p id="game-status" class="text-sm sm:text-lg text-gray-500 mt-1">Setting up the game...</p>
             </div>
             <div class="w-32 text-right">
                 <button id="dark-mode-toggle" class="w-12 h-10 text-2xl rounded-lg inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300"></button>
@@ -43,12 +42,20 @@
         </div>
 
         <div id="player-hand-area" class="card mt-4 p-4 rounded-lg shadow-md">
-            <div class="relative text-center mb-2 h-10">
-                 <div class="absolute left-0 top-0 flex items-center h-full space-x-3">
-                     <button id="boneyard" class="bg-gray-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-600">Draw</button>
-                     <div class="text-lg hidden sm:block">Boneyard: <span id="boneyard-count" class="font-bold">0</span></div>
-                 </div>
-                 <h2 class="font-bold text-xl leading-10">Your Hand (<span id="player-domino-count">0</span>)</h2>
+            <div class="flex justify-between items-center mb-2 h-10">
+                <div class="flex items-center space-x-3">
+                    <button id="boneyard" class="bg-gray-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-600">Draw</button>
+                    <div class="text-lg hidden sm:block">Boneyard: <span id="boneyard-count" class="font-bold">0</span></div>
+                </div>
+                <div>
+                    <p id="game-status" class="text-lg sm:text-xl font-bold"></p>
+                </div>
+                <div class="flex items-center space-x-2">
+                     <span class="font-bold text-2xl" id="player-domino-count">0</span>
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7s0 4 8 4 8-4 8-4" />
+                     </svg>
+                </div>
             </div>
 
             <div id="player-hand" class="player-hand-container p-2 min-h-[400px]"></div>
