@@ -221,10 +221,10 @@ function renderAll() {
 function createTrainRow(key, labelText) {
     const train = gameState.trains[key];
     const trackRow = document.createElement('div');
-    trackRow.className = 'flex flex-col md:flex-row md:items-center py-2';
+    trackRow.className = 'train-row'; // Use custom class
 
     const label = document.createElement('div');
-    label.className = 'w-full text-left text-sm md:text-base font-semibold text-gray-600 shrink-0 flex items-center justify-start md:w-48 md:justify-end md:text-right md:pr-4';
+    label.className = 'train-label'; // Use custom class
     label.textContent = labelText;
 
     const trainTrack = document.createElement('div');
