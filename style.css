@@ -30,6 +30,7 @@ body {
 .domino.dragging {
     opacity: 0.5;
     border: 2px dashed #4B5563;
+    z-index: 100; /* Ensure dragged domino is on top */
 }
 .domino-half {
     width: 100%;
@@ -272,5 +273,10 @@ body {
     }
     #boneyard-count {
         font-size: 1.25rem;
+    }
+    
+    /* --- NEW RULE FOR MOBILE TRAINS --- */
+    .train-path .domino:not(:last-child) {
+        display: none;
     }
 }
