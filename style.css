@@ -1,0 +1,276 @@
+body {
+    font-family: 'Inter', sans-serif;
+    touch-action: manipulation;
+}
+.domino {
+    width: 40px;
+    height: 80px;
+    border: 1px solid #D1D5DB;
+    background-color: #FBFCFE;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15), 0 0 8px rgba(173, 216, 230, 0), 0 2px 2px rgba(0,0,0,0.1);
+    flex-shrink: 0;
+}
+.domino:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15), 0 0 12px rgba(173, 216, 230, 0.8), 0 4px 8px rgba(0,0,0,0.2);
+}
+.domino.selected {
+    border-color: #3B82F6;
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.15), 0 0 12px #3B82F6, 0 4px 8px rgba(0,0,0,0.2);
+}
+.domino.dragging {
+    opacity: 0.5;
+    border: 2px dashed #4B5563;
+}
+.domino-half {
+    width: 100%;
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+.domino-divider {
+    height: 1px;
+    width: 80%;
+    background-color: #9CA3AF;
+}
+.pip {
+    width: 7px;
+    height: 7px;
+    border: 1px solid #374151;
+    border-radius: 50%;
+    position: absolute;
+    transform: translate(-50%, -50%);
+}
+
+/* Pip Layout (Works for both Vertical and Horizontal) */
+.pip-container[data-value="1"] .pip-1 { top: 50%; left: 50%; }
+.pip-container[data-value="2"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="2"] .pip-2 { top: 75%; left: 75%; }
+.pip-container[data-value="3"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="3"] .pip-2 { top: 50%; left: 50%; }
+.pip-container[data-value="3"] .pip-3 { top: 75%; left: 75%; }
+.pip-container[data-value="4"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="4"] .pip-2 { top: 25%; left: 75%; }
+.pip-container[data-value="4"] .pip-3 { top: 75%; left: 25%; }
+.pip-container[data-value="4"] .pip-4 { top: 75%; left: 75%; }
+.pip-container[data-value="5"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="5"] .pip-2 { top: 25%; left: 75%; }
+.pip-container[data-value="5"] .pip-3 { top: 50%; left: 50%; }
+.pip-container[data-value="5"] .pip-4 { top: 75%; left: 25%; }
+.pip-container[data-value="5"] .pip-5 { top: 75%; left: 75%; }
+.pip-container[data-value="6"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="6"] .pip-2 { top: 25%; left: 75%; }
+.pip-container[data-value="6"] .pip-3 { top: 50%; left: 25%; }
+.pip-container[data-value="6"] .pip-4 { top: 50%; left: 75%; }
+.pip-container[data-value="6"] .pip-5 { top: 75%; left: 25%; }
+.pip-container[data-value="6"] .pip-6 { top: 75%; left: 75%; }
+.pip-container[data-value="7"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="7"] .pip-2 { top: 25%; left: 75%; }
+.pip-container[data-value="7"] .pip-3 { top: 50%; left: 25%; }
+.pip-container[data-value="7"] .pip-4 { top: 50%; left: 50%; }
+.pip-container[data-value="7"] .pip-5 { top: 50%; left: 75%; }
+.pip-container[data-value="7"] .pip-6 { top: 75%; left: 25%; }
+.pip-container[data-value="7"] .pip-7 { top: 75%; left: 75%; }
+.pip-container[data-value="8"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="8"] .pip-2 { top: 25%; left: 75%; }
+.pip-container[data-value="8"] .pip-3 { top: 42%; left: 25%; }
+.pip-container[data-value="8"] .pip-4 { top: 42%; left: 75%; }
+.pip-container[data-value="8"] .pip-5 { top: 58%; left: 25%; }
+.pip-container[data-value="8"] .pip-6 { top: 58%; left: 75%; }
+.pip-container[data-value="8"] .pip-7 { top: 75%; left: 25%; }
+.pip-container[data-value="8"] .pip-8 { top: 75%; left: 75%; }
+.pip-container[data-value="9"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="9"] .pip-2 { top: 25%; left: 50%; }
+.pip-container[data-value="9"] .pip-3 { top: 25%; left: 75%; }
+.pip-container[data-value="9"] .pip-4 { top: 50%; left: 25%; }
+.pip-container[data-value="9"] .pip-5 { top: 50%; left: 50%; }
+.pip-container[data-value="9"] .pip-6 { top: 50%; left: 75%; }
+.pip-container[data-value="9"] .pip-7 { top: 75%; left: 25%; }
+.pip-container[data-value="9"] .pip-8 { top: 75%; left: 50%; }
+.pip-container[data-value="9"] .pip-9 { top: 75%; left: 75%; }
+.pip-container[data-value="10"] .pip-1 { top: 15%; left: 25%; }
+.pip-container[data-value="10"] .pip-2 { top: 15%; left: 75%; }
+.pip-container[data-value="10"] .pip-3 { top: 37%; left: 25%; }
+.pip-container[data-value="10"] .pip-4 { top: 37%; left: 75%; }
+.pip-container[data-value="10"] .pip-5 { top: 50%; left: 50%; }
+.pip-container[data-value="10"] .pip-6 { top: 63%; left: 25%; }
+.pip-container[data-value="10"] .pip-7 { top: 63%; left: 75%; }
+.pip-container[data-value="10"] .pip-8 { top: 85%; left: 25%; }
+.pip-container[data-value="10"] .pip-9 { top: 85%; left: 75%; }
+.pip-container[data-value="10"] .pip-10 { top: 50%; left: 50%; }
+.pip-container[data-value="11"] .pip-1 { top: 15%; left: 25%; }
+.pip-container[data-value="11"] .pip-2 { top: 15%; left: 75%; }
+.pip-container[data-value="11"] .pip-3 { top: 37%; left: 25%; }
+.pip-container[data-value="11"] .pip-4 { top: 37%; left: 75%; }
+.pip-container[data-value="11"] .pip-5 { top: 50%; left: 25%; }
+.pip-container[data-value="11"] .pip-6 { top: 50%; left: 50%; }
+.pip-container[data-value="11"] .pip-7 { top: 50%; left: 75%; }
+.pip-container[data-value="11"] .pip-8 { top: 63%; left: 25%; }
+.pip-container[data-value="11"] .pip-9 { top: 63%; left: 75%; }
+.pip-container[data-value="11"] .pip-10 { top: 85%; left: 25%; }
+.pip-container[data-value="11"] .pip-11 { top: 85%; left: 75%; }
+.pip-container[data-value="12"] .pip-1 { top: 15%; left: 25%; }
+.pip-container[data-value="12"] .pip-2 { top: 15%; left: 75%; }
+.pip-container[data-value="12"] .pip-3 { top: 30%; left: 25%; }
+.pip-container[data-value="12"] .pip-4 { top: 30%; left: 75%; }
+.pip-container[data-value="12"] .pip-5 { top: 45%; left: 25%; }
+.pip-container[data-value="12"] .pip-6 { top: 45%; left: 75%; }
+.pip-container[data-value="12"] .pip-7 { top: 55%; left: 25%; }
+.pip-container[data-value="12"] .pip-8 { top: 55%; left: 75%; }
+.pip-container[data-value="12"] .pip-9 { top: 70%; left: 25%; }
+.pip-container[data-value="12"] .pip-10 { top: 70%; left: 75%; }
+.pip-container[data-value="12"] .pip-11 { top: 85%; left: 25%; }
+.pip-container[data-value="12"] .pip-12 { top: 85%; left: 75%; }
+
+/* Horizontal Domino Styles */
+.domino.horizontal {
+    width: 80px;
+    height: 40px;
+    flex-direction: row;
+}
+.domino.horizontal .domino-half {
+    width: 50%;
+    height: 100%;
+}
+.domino.horizontal .domino-divider {
+    width: 1px;
+    height: 80%;
+}
+
+.pip-container[data-value="0"] .pip { background-color: #6B7280; }
+.pip-container[data-value="1"] .pip { background-color: #EF4444; }
+.pip-container[data-value="2"] .pip { background-color: #F97316; }
+.pip-container[data-value="3"] .pip { background-color: #F59E0B; }
+.pip-container[data-value="4"] .pip { background-color: #84CC16; }
+.pip-container[data-value="5"] .pip { background-color: #22C55E; }
+.pip-container[data-value="6"] .pip { background-color: #10B981; }
+.pip-container[data-value="7"] .pip { background-color: #14B8A6; }
+.pip-container[data-value="8"] .pip { background-color: #06B6D4; }
+.pip-container[data-value="9"] .pip { background-color: #3B82F6; }
+.pip-container[data-value="10"] .pip { background-color: #6366F1; }
+.pip-container[data-value="11"] .pip { background-color: #EC4899; }
+.pip-container[data-value="12"] .pip { background-color: #A855F7; }
+
+.train-track {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 8px;
+    border-radius: 8px;
+    min-height: 56px;
+    transition: all 0.2s ease-in-out;
+}
+.train-track.playable {
+    background-color: #D1FAE5;
+    cursor: pointer;
+    border: 2px dashed #10B981;
+}
+.train-path {
+    display: flex;
+    transition: transform 0.3s ease-in-out;
+}
+.train-path .domino, .train-track .domino {
+    margin-right: 2px;
+}
+
+.player-hand-container {
+    position: relative;
+    border: 2px dashed #60A5FA;
+    border-radius: 8px;
+    background-color: #EFF6FF;
+}
+
+.player-hand-container .domino {
+    position: absolute;
+}
+
+#modal, #game-setup-modal {
+    transition: opacity 0.3s ease;
+}
+
+#scoreboard-arrow.rotated {
+    transform: rotate(180deg);
+}
+
+.setup-btn {
+    background-color: #E5E7EB;
+    color: #374151;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #9CA3AF;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.setup-btn:hover {
+    background-color: #D1D5DB;
+}
+.setup-btn.selected {
+    background-color: #3B82F6;
+    color: white;
+    border-color: #2563EB;
+}
+.setup-btn.selected:hover {
+    background-color: #2563EB;
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    body {
+        -webkit-text-size-adjust: 100%;
+    }
+    #game-container {
+        padding: 0.5rem;
+    }
+    #game-board {
+        grid-template-columns: 1fr;
+    }
+    header h1 {
+        font-size: 1.5rem;
+    }
+    header p {
+        font-size: 0.875rem;
+    }
+    .player-hand-container .domino.horizontal {
+        width: 70px;
+        height: 35px;
+    }
+    .player-hand-container .pip {
+        width: 5px;
+        height: 5px;
+    }
+     .train-track .domino.horizontal {
+        width: 70px;
+        height: 35px;
+    }
+    .train-track .pip {
+        width: 5px;
+        height: 5px;
+    }
+    .train-track {
+        min-height: 48px;
+    }
+    .w-48 { /* label width */
+        width: 6rem;
+        font-size: 0.8rem;
+    }
+    #boneyard {
+        width: 5rem;
+        height: 3rem;
+    }
+    #boneyard-count {
+        font-size: 1.25rem;
+    }
+}
