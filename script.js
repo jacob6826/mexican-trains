@@ -781,11 +781,9 @@ function handleTouchEnd(e) {
         const finalY = touchState.dominoInitialY + deltaY;
         
         if (lastTouch.clientX >= handRect.left && lastTouch.clientX <= handRect.right && lastTouch.clientY >= handRect.top && lastTouch.clientY <= handRect.bottom) {
-            // THIS IS THE FIX: Directly update the game state.
             gameState.players[0].hand[touchState.index].x = finalX;
             gameState.players[0].hand[touchState.index].y = finalY;
         }
-        // Always re-render to snap back if dropped outside, or to confirm position if inside.
         renderPlayerHand();
 
     } else {
