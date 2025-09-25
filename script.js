@@ -199,7 +199,7 @@ function initGame(isNewGame = true) {
     gameState.isRoundOver = false;
     gameState.currentPlayer = 0;
     gameState.selectedDomino = null;
-    gameState.mustSatisfyDouble = false;
+    gameState.mustSatisfyDouble = null; // New state for unsatisfied doubles
     
     scoreboardEl.classList.add('hidden');
     scoreboardArrow.classList.remove('rotated');
@@ -294,6 +294,17 @@ function updatePlayableTrains() {
     document.querySelectorAll('.train-track').forEach(el => el.classList.remove('playable'));
 
     if (!domino) return;
+
+    if (gameState.mustSatisfyDouble) {
+        const key = gameState.mustSatisfyDouble;
+        const train = gameState.trains[key];
+        const endValue = getTrainEndValue(train);
+        if (domino.v1 === endValue || domino.v2 === endValue) {
+            const trainEl = document.querySelector(`.train-track[data-train-key="${key}"]`);
+            if (trainEl) trainEl.classList.add('playable');
+        }
+        return;
+    }
     
     Object.keys(gameState.trains).forEach(key => {
         const train = gameState.trains[key];
@@ -367,8 +378,6 @@ function handleTrainClick(e) {
         gameState.selectedDomino = null;
         renderAll();
         
-        // --- BUG FIX ADDED HERE ---
-        // If playing the domino ended the round, stop immediately.
         if (gameState.isRoundOver) return;
 
         if (!domino.isDouble) {
@@ -377,14 +386,7 @@ function handleTrainClick(e) {
             gameStatusEl.textContent = "You played a double! Play another domino.";
             if(!canPlayerPlay(0)){
                 showModal("Double Trouble", "You can't satisfy your double. You must draw.", "Draw", () => {
-                    handleBoneyardClick();
-                     if(!canPlayerPlay(0)){
-                         showModal("Still Stuck", "You still can't satisfy the double. Your train is now open.", "OK", () => {
-                              gameState.trains[`player${gameState.currentPlayer}`].isOpen = true;
-                              renderAll();
-                              setTimeout(nextTurn, 500);
-                         });
-                     }
+                    handleBoneyardClick(trainKey); // Pass trainKey to handleBoneyardClick
                 });
             }
         }
@@ -393,6 +395,14 @@ function handleTrainClick(e) {
 
 function canPlayerPlay(playerIndex) {
     const player = gameState.players[playerIndex];
+    
+    if (gameState.mustSatisfyDouble) {
+        const key = gameState.mustSatisfyDouble;
+        const train = gameState.trains[key];
+        const endValue = getTrainEndValue(train);
+        return player.hand.some(d => d.v1 === endValue || d.v2 === endValue);
+    }
+
     for (const domino of player.hand) {
         for (const key of Object.keys(gameState.trains)) {
             const train = gameState.trains[key];
@@ -425,6 +435,10 @@ function playDomino(playerIndex, domino, trainKey) {
     
     train.path.push(playedDomino);
 
+    if (gameState.mustSatisfyDouble === trainKey) {
+        gameState.mustSatisfyDouble = null;
+    }
+
     if(trainKey === `player${playerIndex}`) {
         train.isOpen = false;
     }
@@ -437,7 +451,7 @@ function playDomino(playerIndex, domino, trainKey) {
     return true;
 }
 
-function handleBoneyardClick() {
+function handleBoneyardClick(doubleTrainKey = null) {
     if (gameState.currentPlayer !== 0) return;
     if(canPlayerPlay(0)) {
         showModal("Wait!", "You have a valid move. You don't need to draw.");
@@ -456,13 +470,20 @@ function handleBoneyardClick() {
         renderPlayerHand();
         renderBoneyard();
 
-        const endValues = Object.keys(gameState.trains).map(key => {
-            const train = gameState.trains[key];
-            const canPlayOnTrain = (key === 'mexican') || (key === `player0`) || train.isOpen;
-            return canPlayOnTrain ? getTrainEndValue(train) : null;
-        }).filter(v => v !== null);
+        let isPlayable = false;
+        if (gameState.mustSatisfyDouble) {
+            const endValue = getTrainEndValue(gameState.trains[gameState.mustSatisfyDouble]);
+            isPlayable = newDomino.v1 === endValue || newDomino.v2 === endValue;
+        } else {
+             const endValues = Object.keys(gameState.trains).map(key => {
+                const train = gameState.trains[key];
+                const canPlayOnTrain = (key === 'mexican') || (key === `player0`) || train.isOpen;
+                return canPlayOnTrain ? getTrainEndValue(train) : null;
+            }).filter(v => v !== null);
+            isPlayable = endValues.includes(newDomino.v1) || endValues.includes(newDomino.v2);
+        }
 
-        if (endValues.includes(newDomino.v1) || endValues.includes(newDomino.v2)) {
+        if (isPlayable) {
             showModal("Good Draw!", "You drew a playable domino. Make your move.", "OK");
             gameState.selectedDomino = newDomino;
             renderPlayerHand();
@@ -471,14 +492,17 @@ function handleBoneyardClick() {
             updatePlayableTrains();
         } else {
             gameState.trains.player0.isOpen = true;
+            if (doubleTrainKey) gameState.mustSatisfyDouble = doubleTrainKey;
             renderAll();
-            showModal("No Luck", "You couldn't play the drawn domino. Your train is now open.", "OK", () => {
+            const message = doubleTrainKey ? "You couldn't satisfy the double. Your train is open and the double is now open to all players." : "You couldn't play the drawn domino. Your train is now open.";
+            showModal("No Luck", message, "OK", () => {
                 setTimeout(nextTurn, 500);
             });
         }
     } else {
         showModal("Boneyard Empty", "No more dominoes to draw. You must pass.", "OK", () => {
             gameState.trains.player0.isOpen = true;
+            if (doubleTrainKey) gameState.mustSatisfyDouble = doubleTrainKey;
             renderAll();
             setTimeout(nextTurn, 500);
         });
@@ -488,11 +512,18 @@ function handleBoneyardClick() {
 function nextTurn() {
     if (gameState.isRoundOver) return;
     gameState.currentPlayer = (gameState.currentPlayer + 1) % gameState.players.length;
+    
+    let statusText = "Your turn.";
     if (gameState.players[gameState.currentPlayer].isAI) {
-        gameStatusEl.textContent = `${gameState.players[gameState.currentPlayer].name} is thinking...`;
+        statusText = `${gameState.players[gameState.currentPlayer].name}'s turn.`;
+    }
+    if (gameState.mustSatisfyDouble) {
+        statusText += ` Must satisfy the double on ${gameState.trains[gameState.mustSatisfyDouble].owner === null ? 'the Mexican Train' : gameState.players[gameState.trains[gameState.mustSatisfyDouble].owner].name + "'s train"}.`;
+    }
+    gameStatusEl.textContent = statusText;
+
+    if (gameState.players[gameState.currentPlayer].isAI) {
         setTimeout(handleAITurn, 1000);
-    } else {
-        gameStatusEl.textContent = "Your turn.";
     }
 }
 
@@ -507,7 +538,12 @@ function handleAITurn() {
         renderAll();
         if(move.domino.isDouble) {
             gameStatusEl.textContent = `${player.name} played a double! It will play again.`;
-            setTimeout(handleAITurn, 1000); 
+            const canSatisfy = canPlayerPlay(playerIndex);
+            if (!canSatisfy) {
+                 gameState.mustSatisfyDouble = move.trainKey;
+                 renderAll();
+            }
+            setTimeout(() => handleAITurn(!canSatisfy), 1000); // Pass true if AI couldn't satisfy its own double
             return;
         }
     } else {
@@ -539,6 +575,18 @@ function handleAITurn() {
 function findBestAIMove(playerIndex, specificDomino = null) {
     const hand = specificDomino ? [specificDomino] : gameState.players[playerIndex].hand;
     let possibleMoves = [];
+
+    if (gameState.mustSatisfyDouble) {
+        const key = gameState.mustSatisfyDouble;
+        const train = gameState.trains[key];
+        const endValue = getTrainEndValue(train);
+        for (const domino of hand) {
+            if (domino.v1 === endValue || domino.v2 === endValue) {
+                possibleMoves.push({ domino, trainKey: key, score: 1000 });
+            }
+        }
+        return possibleMoves.length > 0 ? possibleMoves[0] : null;
+    }
 
     for (const domino of hand) {
         for (const key of Object.keys(gameState.trains)) {
@@ -848,7 +896,7 @@ document.getElementById('close-setup-modal').addEventListener('click', () => {
 });
 
 document.getElementById('board-area').addEventListener('click', handleTrainClick);
-boneyardEl.addEventListener('click', handleBoneyardClick);
+boneyardEl.addEventListener('click', () => handleBoneyardClick());
 newGameBtn.addEventListener('click', promptNewGame);
 
 playerHandEl.addEventListener('dragstart', handleDragStart);
