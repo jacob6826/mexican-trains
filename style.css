@@ -53,6 +53,7 @@ p, span, div { color: var(--text-muted-color); }
 #scoreboard .bg-gray-50 { background-color: var(--bg-color); }
 #scoreboard-arrow { stroke: var(--text-color); }
 .player-hand-container { background-color: var(--bg-color); }
+
 .domino {
     background-color: var(--domino-bg);
     border: 1px solid var(--domino-border);
@@ -102,18 +103,87 @@ p, span, div { color: var(--text-muted-color); }
 .pip-container[data-value="10"] .pip { background-color: var(--pip-color-10); }
 .pip-container[data-value="11"] .pip { background-color: var(--pip-color-11); }
 .pip-container[data-value="12"] .pip { background-color: var(--pip-color-12); }
-.pip-container { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(4, 1fr); gap: 1px; place-items: center; }
-.pip-container[data-value="1"] .pip-1 { grid-area: 2 / 2 / 4 / 3; } .pip-container[data-value="2"] .pip-1 { grid-area: 1 / 1; }
-.pip-container[data-value="2"] .pip-2 { grid-area: 4 / 3; } .pip-container[data-value="3"] .pip-1 { grid-area: 1 / 1; }
-.pip-container[data-value="3"] .pip-2 { grid-area: 2 / 2 / 4 / 3; } .pip-container[data-value="3"] .pip-3 { grid-area: 4 / 3; }
-.pip-container[data-value="4"] .pip-1 { grid-area: 1 / 1; } .pip-container[data-value="4"] .pip-2 { grid-area: 1 / 3; }
-.pip-container[data-value="4"] .pip-3 { grid-area: 4 / 1; } .pip-container[data-value="4"] .pip-4 { grid-area: 4 / 3; }
-.pip-container[data-value="5"] .pip-1 { grid-area: 1 / 1; } .pip-container[data-value="5"] .pip-2 { grid-area: 1 / 3; }
-.pip-container[data-value="5"] .pip-3 { grid-area: 2 / 2 / 4 / 3; } .pip-container[data-value="5"] .pip-4 { grid-area: 4 / 1; }
-.pip-container[data-value="5"] .pip-5 { grid-area: 4 / 3; } .pip-container[data-value="6"] .pip-1 { grid-area: 1 / 1; }
-.pip-container[data-value="6"] .pip-2 { grid-area: 1 / 3; } .pip-container[data-value="6"] .pip-3 { grid-area: 2 / 1 / 4 / 2; }
-.pip-container[data-value="6"] .pip-4 { grid-area: 2 / 3 / 4 / 4; } .pip-container[data-value="6"] .pip-5 { grid-area: 4 / 1; }
-.pip-container[data-value="6"] .pip-6 { grid-area: 4 / 3; }
+
+/* --- REVERTED TO ORIGINAL PIP LAYOUT --- */
+.pip-container[data-value="1"] .pip-1 { top: 50%; left: 50%; }
+.pip-container[data-value="2"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="2"] .pip-2 { top: 75%; left: 75%; }
+.pip-container[data-value="3"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="3"] .pip-2 { top: 50%; left: 50%; }
+.pip-container[data-value="3"] .pip-3 { top: 75%; left: 75%; }
+.pip-container[data-value="4"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="4"] .pip-2 { top: 25%; left: 75%; }
+.pip-container[data-value="4"] .pip-3 { top: 75%; left: 25%; }
+.pip-container[data-value="4"] .pip-4 { top: 75%; left: 75%; }
+.pip-container[data-value="5"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="5"] .pip-2 { top: 25%; left: 75%; }
+.pip-container[data-value="5"] .pip-3 { top: 50%; left: 50%; }
+.pip-container[data-value="5"] .pip-4 { top: 75%; left: 25%; }
+.pip-container[data-value="5"] .pip-5 { top: 75%; left: 75%; }
+.pip-container[data-value="6"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="6"] .pip-2 { top: 25%; left: 75%; }
+.pip-container[data-value="6"] .pip-3 { top: 50%; left: 25%; }
+.pip-container[data-value="6"] .pip-4 { top: 50%; left: 75%; }
+.pip-container[data-value="6"] .pip-5 { top: 75%; left: 25%; }
+.pip-container[data-value="6"] .pip-6 { top: 75%; left: 75%; }
+.pip-container[data-value="7"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="7"] .pip-2 { top: 25%; left: 75%; }
+.pip-container[data-value="7"] .pip-3 { top: 50%; left: 25%; }
+.pip-container[data-value="7"] .pip-4 { top: 50%; left: 50%; }
+.pip-container[data-value="7"] .pip-5 { top: 50%; left: 75%; }
+.pip-container[data-value="7"] .pip-6 { top: 75%; left: 25%; }
+.pip-container[data-value="7"] .pip-7 { top: 75%; left: 75%; }
+.pip-container[data-value="8"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="8"] .pip-2 { top: 25%; left: 75%; }
+.pip-container[data-value="8"] .pip-3 { top: 42%; left: 25%; }
+.pip-container[data-value="8"] .pip-4 { top: 42%; left: 75%; }
+.pip-container[data-value="8"] .pip-5 { top: 58%; left: 25%; }
+.pip-container[data-value="8"] .pip-6 { top: 58%; left: 75%; }
+.pip-container[data-value="8"] .pip-7 { top: 75%; left: 25%; }
+.pip-container[data-value="8"] .pip-8 { top: 75%; left: 75%; }
+.pip-container[data-value="9"] .pip-1 { top: 25%; left: 25%; }
+.pip-container[data-value="9"] .pip-2 { top: 25%; left: 50%; }
+.pip-container[data-value="9"] .pip-3 { top: 25%; left: 75%; }
+.pip-container[data-value="9"] .pip-4 { top: 50%; left: 25%; }
+.pip-container[data-value="9"] .pip-5 { top: 50%; left: 50%; }
+.pip-container[data-value="9"] .pip-6 { top: 50%; left: 75%; }
+.pip-container[data-value="9"] .pip-7 { top: 75%; left: 25%; }
+.pip-container[data-value="9"] .pip-8 { top: 75%; left: 50%; }
+.pip-container[data-value="9"] .pip-9 { top: 75%; left: 75%; }
+.pip-container[data-value="10"] .pip-1 { top: 15%; left: 25%; }
+.pip-container[data-value="10"] .pip-2 { top: 15%; left: 75%; }
+.pip-container[data-value="10"] .pip-3 { top: 37%; left: 25%; }
+.pip-container[data-value="10"] .pip-4 { top: 37%; left: 75%; }
+.pip-container[data-value="10"] .pip-5 { top: 50%; left: 50%; }
+.pip-container[data-value="10"] .pip-6 { top: 63%; left: 25%; }
+.pip-container[data-value="10"] .pip-7 { top: 63%; left: 75%; }
+.pip-container[data-value="10"] .pip-8 { top: 85%; left: 25%; }
+.pip-container[data-value="10"] .pip-9 { top: 85%; left: 75%; }
+.pip-container[data-value="10"] .pip-10 { top: 50%; left: 50%; }
+.pip-container[data-value="11"] .pip-1 { top: 15%; left: 25%; }
+.pip-container[data-value="11"] .pip-2 { top: 15%; left: 75%; }
+.pip-container[data-value="11"] .pip-3 { top: 37%; left: 25%; }
+.pip-container[data-value="11"] .pip-4 { top: 37%; left: 75%; }
+.pip-container[data-value="11"] .pip-5 { top: 50%; left: 25%; }
+.pip-container[data-value="11"] .pip-6 { top: 50%; left: 50%; }
+.pip-container[data-value="11"] .pip-7 { top: 50%; left: 75%; }
+.pip-container[data-value="11"] .pip-8 { top: 63%; left: 25%; }
+.pip-container[data-value="11"] .pip-9 { top: 63%; left: 75%; }
+.pip-container[data-value="11"] .pip-10 { top: 85%; left: 25%; }
+.pip-container[data-value="11"] .pip-11 { top: 85%; left: 75%; }
+.pip-container[data-value="12"] .pip-1 { top: 15%; left: 25%; }
+.pip-container[data-value="12"] .pip-2 { top: 15%; left: 75%; }
+.pip-container[data-value="12"] .pip-3 { top: 30%; left: 25%; }
+.pip-container[data-value="12"] .pip-4 { top: 30%; left: 75%; }
+.pip-container[data-value="12"] .pip-5 { top: 45%; left: 25%; }
+.pip-container[data-value="12"] .pip-6 { top: 45%; left: 75%; }
+.pip-container[data-value="12"] .pip-7 { top: 55%; left: 25%; }
+.pip-container[data-value="12"] .pip-8 { top: 55%; left: 75%; }
+.pip-container[data-value="12"] .pip-9 { top: 70%; left: 25%; }
+.pip-container[data-value="12"] .pip-10 { top: 70%; left: 75%; }
+.pip-container[data-value="12"] .pip-11 { top: 85%; left: 25%; }
+.pip-container[data-value="12"] .pip-12 { top: 85%; left: 75%; }
+
 .train-track { display: flex; align-items: center; flex-grow: 1; overflow: hidden; padding: 0.5rem; border-radius: 0.5rem; min-height: 56px; transition: all 0.2s ease-in-out; }
 .train-track.playable { background-color: #D1FAE5; cursor: pointer; border: 2px dashed #10B981; }
 .train-path { display: flex; transition: transform 0.3s ease-in-out; }
