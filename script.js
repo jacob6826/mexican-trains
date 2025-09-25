@@ -221,10 +221,10 @@ function renderAll() {
 function createTrainRow(key, labelText) {
     const train = gameState.trains[key];
     const trackRow = document.createElement('div');
-    trackRow.className = 'train-row'; // Use custom class from style.css
+    trackRow.className = 'train-row';
 
     const label = document.createElement('div');
-    label.className = 'train-label'; // Use custom class from style.css
+    label.className = 'train-label';
     label.textContent = labelText;
 
     const trainTrack = document.createElement('div');
@@ -242,14 +242,8 @@ function createTrainRow(key, labelText) {
         pathContainer.appendChild(createDominoElement(domino, true));
     });
 
-    const dominoWidth = window.innerWidth < 768 ? 70 : 80;
-    if (train.path.length > 3) {
-        const offset = (train.path.length - 3) * (dominoWidth + 2);
-        pathContainer.style.transform = `translateX(-${offset}px)`;
-    } else {
-        pathContainer.style.transform = `translateX(0px)`;
-    }
-
+    // SLIDING LOGIC REMOVED - CSS now handles visibility
+    
     trainTrack.appendChild(engineEl);
     trainTrack.appendChild(pathContainer);
     
