@@ -104,7 +104,6 @@ p, span, div { color: var(--text-muted-color); }
 .pip-container[data-value="11"] .pip { background-color: var(--pip-color-11); }
 .pip-container[data-value="12"] .pip { background-color: var(--pip-color-12); }
 
-/* --- REVERTED TO ORIGINAL PIP LAYOUT --- */
 .pip-container[data-value="1"] .pip-1 { top: 50%; left: 50%; }
 .pip-container[data-value="2"] .pip-1 { top: 25%; left: 25%; }
 .pip-container[data-value="2"] .pip-2 { top: 75%; left: 75%; }
@@ -195,7 +194,34 @@ p, span, div { color: var(--text-muted-color); }
 .setup-btn:hover { background-color: #D1D5DB; }
 .setup-btn.selected { background-color: #3B82F6; color: white; border-color: #2563EB; }
 .setup-btn.selected:hover { background-color: #2563EB; }
-@media (max-width: 768px) {
+
+/* --- ROBUST TRAIN LAYOUT STYLES --- */
+.train-row {
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 0;
+}
+.train-row .train-label {
+    text-align: left;
+    width: 100%;
+    font-size: 0.875rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+@media (min-width: 768px) {
+    .train-row {
+        flex-direction: row;
+        align-items: center;
+    }
+    .train-row .train-label {
+        font-size: 1rem;
+        justify-content: flex-end;
+        text-align: right;
+        width: 12rem;
+        padding-right: 1rem;
+    }
     .domino.horizontal { width: 70px; height: 35px; }
     .pip { width: 5px; height: 5px; }
     .train-path .domino:not(:nth-last-child(-n+3)) { display: none; }
