@@ -1,1 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mexican Train Dominoes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="game-container" class="p-4 max-w-7xl mx-auto">
+        <header class="card flex items-center justify-between mb-4 p-4 rounded-lg">
+            <div class="w-32 text-left">
+                <button id="new-game-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg shadow">New Game</button>
+            </div>
+            <div class="text-center">
+                 <h1 class="text-xl sm:text-3xl font-bold text-gray-700">Mexican Train Dominoes</h1>
+            </div>
+            <div class="w-32 text-right">
+                <button id="dark-mode-toggle" class="w-12 h-10 text-2xl rounded-lg inline-flex items-center justify-center bg-gray-200 hover:bg-gray-300"></button>
+            </div>
+        </header>
+
+        <div id="game-board" class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            
+            <div class="card p-4 rounded-lg shadow-md">
+                <div id="scoreboard-container">
+                    <div id="scoreboard-header" class="flex justify-center items-center gap-2 cursor-pointer mb-2">
+                        <h2 class="font-bold text-xl">Score</h2>
+                        <svg id="scoreboard-arrow" class="w-4 h-4 transition-transform" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+                        </svg>
+                    </div>
+                    <div id="scoreboard" class="space-y-1 hidden"></div>
+                </div>
+            </div>
+
+            <div id="board-area" class="card p-4 rounded-lg shadow-md lg:col-span-2 space-y-2">
+                </div>
+        </div>
+
+        <div id="player-hand-area" class="card mt-4 p-4 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-2 h-10">
+                <div class="flex items-center space-x-3">
+                    <button id="boneyard" class="bg-gray-700 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-600">Draw</button>
+                    <div class="text-lg hidden sm:block">Boneyard: <span id="boneyard-count" class="font-bold">0</span></div>
+                </div>
+                <div>
+                    <p id="game-status" class="text-lg sm:text-xl font-bold"></p>
+                </div>
+                <div class="flex items-center space-x-2">
+                     <span class="font-bold text-2xl" id="player-domino-count">0</span>
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4M4 7s0 4 8 4 8-4 8-4" />
+                     </svg>
+                </div>
+            </div>
+
+            <div id="player-hand" class="player-hand-container p-2 min-h-[400px]"></div>
+        </div>
+    </div>
+
+    <div id="modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white p-8 rounded-lg shadow-2xl text-center max-w-sm w-full">
+            <h2 id="modal-title" class="text-2xl font-bold mb-4"></h2>
+            <p id="modal-body" class="mb-6"></p>
+            <button id="modal-button" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">OK</button>
+        </div>
+    </div>
+
+    <div id="game-setup-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="relative bg-white p-8 rounded-lg shadow-2xl text-center max-w-md w-full space-y-6">
+            <button id="close-setup-modal" class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-3xl leading-none w-8 h-8">&times;</button>
+            <h2 class="text-2xl font-bold">New Game Setup</h2>
+
+            <div>
+                <h3 class="font-semibold mb-2">1. Choose Game Mode</h3>
+                <div id="setup-game-mode" class="flex justify-center gap-2">
+                    <button data-value="traditional" class="setup-btn">Traditional (13 Rounds)</button>
+                    <button data-value="quick" class="setup-btn">Quick Game</button>
+                </div>
+            </div>
+
+            <div id="setup-rounds-section" class="hidden">
+                <h3 class="font-semibold mb-2">2. Choose Number of Rounds</h3>
+                <div id="setup-rounds" class="flex justify-center gap-2">
+                    <button data-value="3" class="setup-btn">3</button>
+                    <button data-value="4" class="setup-btn">4</button>
+                    <button data-value="5" class="setup-btn">5</button>
+                </div>
+            </div>
+
+            <div id="setup-players-section" class="hidden">
+                <h3 class="font-semibold mb-2">3. Choose AI Opponents</h3>
+                <div id="setup-players" class="flex justify-center gap-2">
+                    <button data-value="1" class="setup-btn">1</button>
+                    <button data-value="2" class="setup-btn">2</button>
+                    <button data-value="3" class="setup-btn">3</button>
+                    <button data-value="4" class="setup-btn">4</button>
+                    <button data-value="5" class="setup-btn">5</button>
+                </div>
+            </div>
+
+            <button id="start-game-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg w-full disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>Start Game</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
 
