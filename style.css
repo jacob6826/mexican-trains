@@ -269,7 +269,9 @@ body {
         font-size: 1.25rem;
     }
 
-    .train-path .domino:not(:last-child) {
+    /* --- UPDATED RULE FOR MOBILE TRAINS --- */
+    /* Hides all but the last 3 dominoes in the train path */
+    .train-path .domino:not(:nth-last-child(-n+3)) {
         display: none;
     }
 }
