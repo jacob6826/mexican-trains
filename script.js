@@ -221,10 +221,10 @@ function renderAll() {
 function createTrainRow(key, labelText) {
     const train = gameState.trains[key];
     const trackRow = document.createElement('div');
-    trackRow.className = 'train-row'; // Use custom class
+    trackRow.className = 'train-row'; // Use custom class from style.css
 
     const label = document.createElement('div');
-    label.className = 'train-label'; // Use custom class
+    label.className = 'train-label'; // Use custom class from style.css
     label.textContent = labelText;
 
     const trainTrack = document.createElement('div');
@@ -243,9 +243,7 @@ function createTrainRow(key, labelText) {
     });
 
     const dominoWidth = window.innerWidth < 768 ? 70 : 80;
-    const isMobile = window.innerWidth <= 768;
-
-    if (!isMobile && train.path.length > 3) {
+    if (train.path.length > 3) {
         const offset = (train.path.length - 3) * (dominoWidth + 2);
         pathContainer.style.transform = `translateX(-${offset}px)`;
     } else {
